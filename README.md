@@ -92,3 +92,5 @@ Hey, my name is Anastasiia, I am a Data Engineer wanting to achieve high results
 <br>
 I'm open to feedback and would love to discuss the architectural choices I made in this project! <br>
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/anastasiia-kukhar-mm7mm1/)
+
+    

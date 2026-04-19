@@ -1,0 +1,60 @@
+services:
+  dwh_db:
+    image: postgres:15
+    container_name: airflow_api_dwh_project_db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=DataWarehouse
+    ports:
+      - "5432:5432" 
+    volumes:
+      # Automatically run scripts when creating a container
+      - ./init-db:/docker-entrypoint-initdb.d
+      # Datasets for the load_bronze() procedure
+      - ./datasets:/datasets
+      # Saving database data locally
+      - ./postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d DataWarehouse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Airflow Webserver 
+  airflow-webserver:
+    image: apache/airflow:2.7.1-python3.10
+    container_name: airflow_web_new
+    command: webserver
+    depends_on:
+      dwh_db:
+        condition: service_healthy
+    ports:
+      - "8085:8080" 
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://admin:root@dwh_db:5432/DataWarehouse
+    user: "501:0" 
+
+  # Airflow Scheduler 
+  airflow-scheduler:
+    image: apache/airflow:2.7.1-python3.10
+    container_name: airflow_sched_new
+    command: scheduler
+    depends_on:
+      dwh_db:
+        condition: service_healthy
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://admin:root@dwh_db:5432/DataWarehouse
+    user: "501:0"
