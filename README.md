@@ -1,4 +1,4 @@
-# 🚀 Project #1: Orchestration with Apache Airflow
+# 🚀 Project: Orchestration with Apache Airflow
 
 ## 📌 Project Goal
 To automate data collection from external APIs and integrate it into an existing Data Warehouse (DWH). This project simulates a **hybrid data system**: legacy Order data (ERP) arrives as CSV files (simulating a legacy system), while market prices and currency exchange rates are fetched in real-time via REST API.
